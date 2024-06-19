@@ -8,6 +8,7 @@ output:
 ---
 
 # Data Visualization Project 03
+## Does this work
 
 
 In this exercise you will explore methods to create different types of data visualizations (such as plotting text data, or exploring the distributions of continuous variables).
@@ -29,10 +30,10 @@ sample_n(weather_tpa, 4)
 ## # A tibble: 4 × 7
 ##    year month   day precipitation max_temp min_temp ave_temp
 ##   <dbl> <dbl> <dbl>         <dbl>    <dbl>    <dbl>    <dbl>
-## 1  2022     6    18          0          98       81     89.5
-## 2  2022     4     3          0          80       68     74  
-## 3  2022    12    20          0.11       67       58     62.5
-## 4  2022     5    22          0          96       74     85
+## 1  2022    11    29          0          83       61       72
+## 2  2022     4    30          1.56       87       67       77
+## 3  2022     6    29          0.04       94       78       86
+## 4  2022     5    22          0          96       74       85
 ```
 
 See https://www.reisanar.com/slides/relationships-models#10 for a reminder on how to use this type of dataset with the `lubridate` package for dates and times (example included in the slides uses data from 2016).
@@ -45,11 +46,64 @@ Using the 2022 data:
 
 Hint: the option `binwidth = 3` was used with the `geom_histogram()` function.
 
+
+
+
+
+
+
+
+
+
+```r
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+
+
+tpa_clean <- weather_tpa %>%
+  unite("doy", year, month, day, sep = "-") %>%
+  mutate(
+    doy = ymd(doy), # Convert to Date format
+    max_temp = as.double(max_temp), 
+    min_temp = as.double(min_temp),
+    precipitation = as.double(precipitation),
+    month = month(doy, label = TRUE, abbr = FALSE) 
+  )
+
+
+ggplot(tpa_clean, aes(x = max_temp, fill = month)) +
+  geom_histogram(binwidth = 3) +
+  labs(
+    x = "Maximum temperatures",
+    y = "Number of Days"
+  ) +
+  facet_wrap(~ month)+ 
+  scale_y_continuous()
+```
+
+![](lastname_project_03_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+
 (b) Create a plot like the one below:
 
 <img src="https://github.com/reisanar/figs/raw/master/tpa_max_temps_density.png" width="80%" style="display: block; margin: auto;" />
 
 Hint: check the `kernel` parameter of the `geom_density()` function, and use `bw = 0.5`.
+
+
+```r
+ggplot(data = weather_tpa) +
+ geom_density(data = weather_tpa, aes(x = max_temp, bw = .5))
+```
+
+```
+## Warning in geom_density(data = weather_tpa, aes(x = max_temp, bw = 0.5)):
+## Ignoring unknown aesthetics: bw
+```
+
+![](lastname_project_03_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 
 (c) Create a plot like the one below:
 
