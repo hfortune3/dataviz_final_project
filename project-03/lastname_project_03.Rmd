@@ -81,8 +81,8 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 Hint: check the `kernel` parameter of the `geom_density()` function, and use `bw = 0.5`.
 
 ```{r}
-ggplot(data = weather_tpa) +
- geom_density(data = weather_tpa, aes(x = max_temp, bw = .5))
+ggplot(data = weather_tpa,aes(x = max_temp,fill = density)) +
+ geom_density(bw = .5, kernel = "epanechnikov")
 ```
 
 
