@@ -36,6 +36,42 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 
 Hint: the option `binwidth = 3` was used with the `geom_histogram()` function.
 
+
+
+
+
+
+
+
+
+```{r}
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+
+
+tpa_clean <- weather_tpa %>%
+  unite("doy", year, month, day, sep = "-") %>%
+  mutate(
+    doy = ymd(doy), # Convert to Date format
+    max_temp = as.double(max_temp), 
+    min_temp = as.double(min_temp),
+    precipitation = as.double(precipitation),
+    month = month(doy, label = TRUE, abbr = FALSE) 
+  )
+
+
+ggplot(tpa_clean, aes(x = max_temp, fill = month)) +
+  geom_histogram(binwidth = 3) +
+  labs(
+    x = "Maximum temperatures",
+    y = "Number of Days"
+  ) +
+  facet_wrap(~ month)+ 
+  scale_y_continuous()
+```
+
+
 (b) Create a plot like the one below:
 
 ```{r, echo = FALSE, out.width="80%", fig.align='center'}
@@ -43,6 +79,12 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 ```
 
 Hint: check the `kernel` parameter of the `geom_density()` function, and use `bw = 0.5`.
+
+```{r}
+ggplot(data = weather_tpa) +
+ geom_density(data = weather_tpa, aes(x = max_temp, bw = .5))
+```
+
 
 (c) Create a plot like the one below:
 
