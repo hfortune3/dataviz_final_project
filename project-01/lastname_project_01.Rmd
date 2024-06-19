@@ -10,3 +10,62 @@ output:
 # Data Visualization Project 01
 
 _revised version of mini-project 01 goes here_
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+
+# Load original data
+rats <- read_csv("https://raw.githubusercontent.com/reisanar/datasets/master/rats_nyc.csv")
+```
+```{r}
+borough_totals<- rats %>% 
+  group_by(borough) %>% 
+  summarize(total = n()) %>% 
+  mutate(proportion = total / sum(total))
+```
+
+```{r}
+ggplot(rats, aes(x = borough, y = location_type)) +
+  geom_jitter()
+```
+
+```{r}
+ggplot(rats, aes(x = borough, fill = location_type)) +
+  geom_bar(position = "dodge")+
+scale_x_discrete(guide = guide_axis(n.dodge=2))
+```
+
+```{r}
+ggplot(rats, aes(x="", fill=location_type)) +
+  geom_bar(stat="count", width=1) +
+  geom_text(aes(label = scales::percent(after_stat(count) / sum(after_stat(count)))), stat = "count", position = position_stack(vjust = .5)) +
+  coord_polar("y", start = 0, direction = -1)
+```
+```{r}
+rats_remove_outliers<- 
+  rats%>%
+  filter(location_type != "3+ Family Apt. Building")%>%
+  filter(location_type != "1-2 Family Dwelling")
+```
+
+```{r}
+ggplot(rats_remove_outliers, aes(x= "")) + 
+  geom_bar(aes(x = location_type, fill = location_type)) +
+  coord_flip() +
+  facet_wrap(~ sighting_month) + 
+  labs(y = "", x = "") +
+  theme(axis.text.x = element_text( size = 5),
+        axis.text.y = element_text(size = 5))
+```
+```{r}
+rats_by_year <- 
+  rats %>%
+  count(sighting_year) 
+
+ggplot(data = rats_by_year, aes(x = sighting_year, y = n, group = 1)) +
+  geom_line()+
+  geom_point()
+```
