@@ -20,12 +20,19 @@ world_shapes <- read_sf( "C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dat
 ```
 
 ```{r}
-#view(marathon_results_2017)
+setwd('C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dataviz_final_project/data')
+marathon_results_2017 = read.csv("marathon_results_2017.csv")
+#marathon_results_2017
+#library(readr)
+#marathon_results<-read.csv("C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dataviz_final_project#/data/marathon_results_2017.csv")
+
 ```
 
 
 ```{r}
 library(plotly)
+library(dplyr)
+library(tidyverse)
 country_count <- marathon_results_2017 %>%
   group_by(Country) %>%
   mutate(count = n()) %>%
@@ -48,10 +55,52 @@ ggplot() +
   theme_light()
 ```
 ```{r}
-
+marathon_results_2017$M.F<-as.factor(marathon_results_2017$M.F)
+class(marathon_results_2017$M.F)
 ```
 
 ```{r}
+top_100 <- marathon_results_2017 %>%
+  filter(Overall <= 100)
 
+interactive_plot<- ggplot(data= top_100, aes(x = Overall, y = Gender, color = M.F))+
+  geom_point()+
+  theme_light()
+
+library(plotly)
+ggplotly(interactive_plot)
+```
+
+```{r}
+gender_box<-ggplot(marathon_results_2017, aes(x = M.F, y = Overall, fill = M.F)) +
+  geom_boxplot() +
+  theme_light()
+library(plotly)
+ggplotly(gender_box)
+```
+```{r}
+regression_model <- lm(Overall ~ Age,
+ data = marathon_results_2017)
+ggplot(marathon_results_2017, aes(x = Age, y = Overall)) +
+ geom_point() +
+ geom_smooth(method = "lm",
+ formula = "y ~ x") +
+  theme_light()
+
+```
+```{r}
+top_100 <- marathon_results_2017 %>%
+  filter(Overall <= 100)
+
+regression_model <- lm(Overall ~ Age,
+ data = top_100)
+ggplot(top_100, aes(x = Age, y = Overall)) +
+ geom_point() +
+ geom_smooth(method = "lm",
+ formula = "y ~ x") +
+   annotate(geom = "text",
+ x = 37, y = 55,
+ label = "Age clearly doesn't define fitness level!")+
+  theme_light()
 ```
 
