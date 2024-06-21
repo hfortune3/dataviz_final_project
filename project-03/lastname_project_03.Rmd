@@ -116,26 +116,38 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 ```
 
 Hint: use the`{ggridges}` package, and the `geom_density_ridges()` function paying close attention to the `quantile_lines` and `quantiles` parameters. The plot above uses the `plasma` option (color scale) for the _viridis_ palette.
-```{r}
-update.packages("ggplot2")
-update.packages("ggridges")
-```
 
 
 ```{r}
-#install.packages("ggridges")
-#install.packages("ggplot")
-# Load the necessary libraries
-library(ggplot2)
+#install.packages("viridis")
+library(viridis)
 library(ggridges)
+tpa_month<- tpa_clean %>%
+  mutate(month = month(doy))
 
-# Create the plot
-ggplot(weather_tpa, aes(x = max_temp, y = month)) +
-  geom_density_ridges()
+ggplot(data = tpa_clean, aes(x = max_temp, y = factor(month), fill = max_temp)) +
+  geom_density_ridges()+
+   scale_fill_viridis_c(option = "C")
+
 ```
-
 
 (e) Create a plot of your choice that uses the attribute for precipitation _(values of -99.9 for temperature or -99.99 for precipitation represent missing data)_.
+
+```{r}
+tpa_clean_no_na <- tpa_clean %>%
+  filter(max_temp != -99.9 & precipitation != -99.99)
+
+ggplot(data = tpa_clean_no_na, aes(x = max_temp, y = precipitation)) +
+  geom_point(alpha = 0.5, color = "blue") + 
+  geom_smooth(method = "lm", color = "red") +  
+ 
+  labs(
+    x = "Max Temp",
+    y = "Precipitation"
+  ) +
+  theme_minimal()
+```
+
 
 
 
@@ -160,59 +172,37 @@ Make sure to include a copy of the dataset in the `data/` folder, and reference 
 
 
 (to get the "raw" data from any of the links listed above, simply click on the `raw` button of the GitHub page and copy the URL to be able to read it in your computer using the `read_csv()` function)
-
-
-### Option (B): Data on Concrete Strength 
-
-Concrete is the most important material in **civil engineering**. The concrete compressive strength is a highly nonlinear function of _age_ and _ingredients_. The dataset used here is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php), and it contains 1030 observations with 9 different attributes 9 (8 quantitative input variables, and 1 quantitative output variable). A data dictionary is included below: 
-
-
-Variable                      |    Notes                
-------------------------------|-------------------------------------------
-Cement                        | kg in a $m^3$ mixture             
-Blast Furnace Slag            | kg in a $m^3$ mixture  
-Fly Ash                       | kg in a $m^3$ mixture             
-Water                         | kg in a $m^3$ mixture              
-Superplasticizer              | kg in a $m^3$ mixture
-Coarse Aggregate              | kg in a $m^3$ mixture
-Fine Aggregate                | kg in a $m^3$ mixture      
-Age                           | in days                                             
-Concrete compressive strength | MPa, megapascals
-
-
-Below we read the `.csv` file using `readr::read_csv()` (the `readr` package is part of the `tidyverse`)
+```{r}
+#setwd("C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dataviz_final_project/data")
+BB_top100_2015 = read.csv("C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dataviz_final_project/data/BB_top100_2015.csv")
+```
+```{r}
+library(tidytext)
+bb_bottom_10<-BB_top100_2015 %>% 
+  filter(Rank %in% 91:100)%>%
+    unnest_tokens(word, Lyrics)%>%
+    filter(!word %in% stop_words$word, str_detect(word, "[a-z]"))
+```
 
 ```{r}
-concrete <- read_csv("../data/concrete.csv", col_types = cols())
+ggsave_proj_3<-bb_bottom_10 %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(Song, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive - negative) %>% 
+  ggplot() + 
+  geom_bar(aes(x = reorder(Song, sentiment), 
+               y = sentiment), 
+           stat = "identity") + 
+  coord_flip() + 
+  labs(x = "", 
+       title = "Sentiment Analysis of Songs using bing lexicon", 
+       subtitle = " 90-100th best Billboard songs in 2015") + 
+  theme_minimal()
 ```
-
-
-Let us create a new attribute for visualization purposes, `strength_range`: 
-
 ```{r}
-new_concrete <- concrete %>%
-  mutate(strength_range = cut(Concrete_compressive_strength, 
-                              breaks = quantile(Concrete_compressive_strength, 
-                                                probs = seq(0, 1, 0.2))) )
+ggsave(ggsave_proj_3, file="bb_bottom_90_100png.png", scale=2)
 ```
-
-
-
-1. Explore the distribution of 2 of the continuous variables available in the dataset. Do ranges make sense? Comment on your findings.
-
-2. Use a _temporal_ indicator such as the one available in the variable `Age` (measured in days). Generate a plot similar to the one shown below. Comment on your results.
-
-```{r, echo = FALSE, out.width="80%", fig.align='center'}
-knitr::include_graphics("https://github.com/reisanar/figs/raw/master/concrete_strength.png")
-```
-
-
-3. Create a scatterplot similar to the one shown below. Pay special attention to which variables are being mapped to specific aesthetics of the plot. Comment on your results. 
-
-```{r, echo = FALSE, out.width="80%", fig.align='center'}
-knitr::include_graphics("https://github.com/reisanar/figs/raw/master/cement_plot.png")
-```
-
 
 
 
