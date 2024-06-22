@@ -79,6 +79,21 @@ library(plotly)
 ggplotly(gender_box)
 ```
 ```{r}
+gender_violin<-ggplot(marathon_results_2017, aes(x = M.F, y = Overall, fill = M.F)) +
+  geom_violin(width = 0.5) +
+  #geom_jitter(height = 0, size = 1, 
+   #           alpha = 0.5) +
+  labs(x = "", y = "Weight") +
+  guides(color = FALSE) + 
+  theme_minimal()
+gender_violin
+```
+```{r}
+ggsave(gender_violin, file="gender_violin.png", scale=2)
+```
+
+
+```{r}
 regression_model <- lm(Overall ~ Age,
  data = marathon_results_2017)
 ggplot(marathon_results_2017, aes(x = Age, y = Overall)) +
@@ -102,5 +117,9 @@ ggplot(top_100, aes(x = Age, y = Overall)) +
  x = 37, y = 55,
  label = "Age clearly doesn't define fitness level!")+
   theme_light()
+
+```
+```{r}
+
 ```
 

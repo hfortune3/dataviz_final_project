@@ -123,3 +123,4 @@ ggplot(data = rats_by_year, aes(x = sighting_year, y = n, group = 1)) +
 ```
 
 ![](lastname_project_01_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+

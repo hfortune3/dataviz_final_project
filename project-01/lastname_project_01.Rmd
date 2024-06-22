@@ -69,3 +69,4 @@ ggplot(data = rats_by_year, aes(x = sighting_year, y = n, group = 1)) +
   geom_line()+
   geom_point()
 ```
+
