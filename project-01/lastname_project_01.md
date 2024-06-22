@@ -67,11 +67,22 @@ borough_totals<- rats %>%
 
 
 ``` r
-ggplot(rats, aes(x = borough, y = location_type)) +
+proj1jitter<-ggplot(rats, aes(x = borough, y = location_type)) +
   geom_jitter()
+proj1jitter
 ```
 
 ![](lastname_project_01_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+
+``` r
+ggsave(proj1jitter, file="proj1jitter.png", scale=2)
+```
+
+```
+## Saving 14 x 10 in image
+```
+
 
 
 ``` r
@@ -80,7 +91,7 @@ ggplot(rats, aes(x = borough, fill = location_type)) +
 scale_x_discrete(guide = guide_axis(n.dodge=2))
 ```
 
-![](lastname_project_01_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](lastname_project_01_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
 ``` r
@@ -90,7 +101,7 @@ ggplot(rats, aes(x="", fill=location_type)) +
   coord_polar("y", start = 0, direction = -1)
 ```
 
-![](lastname_project_01_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](lastname_project_01_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 rats_remove_outliers<- 
@@ -110,7 +121,7 @@ ggplot(rats_remove_outliers, aes(x= "")) +
         axis.text.y = element_text(size = 5))
 ```
 
-![](lastname_project_01_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](lastname_project_01_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 rats_by_year <- 
@@ -119,8 +130,26 @@ rats_by_year <-
 
 ggplot(data = rats_by_year, aes(x = sighting_year, y = n, group = 1)) +
   geom_line()+
-  geom_point()
+  geom_point()+
+  labs(y = "count")
 ```
 
-![](lastname_project_01_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](lastname_project_01_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+
+
+
+``` r
+ggplot(data = rats, aes(x = x_coordinate_state_plane, y = y_coordinate_state_plane, color = borough))+
+geom_point() +
+  scale_color_brewer(palette = "Set2") +
+ theme(legend.position = "top")
+```
+
+```
+## Warning: Removed 319 rows containing missing values or values outside the scale range
+## (`geom_point()`).
+```
+
+![](lastname_project_01_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 

@@ -28,9 +28,15 @@ borough_totals<- rats %>%
 ```
 
 ```{r}
-ggplot(rats, aes(x = borough, y = location_type)) +
+proj1jitter<-ggplot(rats, aes(x = borough, y = location_type)) +
   geom_jitter()
+proj1jitter
 ```
+
+```{r}
+ggsave(proj1jitter, file="proj1jitter.png", scale=2)
+```
+
 
 ```{r}
 ggplot(rats, aes(x = borough, fill = location_type)) +
@@ -67,6 +73,18 @@ rats_by_year <-
 
 ggplot(data = rats_by_year, aes(x = sighting_year, y = n, group = 1)) +
   geom_line()+
-  geom_point()
+  geom_point()+
+  labs(y = "count")
+```
+
+```{r}
+
+```
+
+```{r}
+ggplot(data = rats, aes(x = x_coordinate_state_plane, y = y_coordinate_state_plane, color = borough))+
+geom_point() +
+  scale_color_brewer(palette = "Set2") +
+ theme(legend.position = "top")
 ```
 
