@@ -199,6 +199,7 @@ ggsave_proj_3<-bb_bottom_10 %>%
        title = "Sentiment Analysis of Songs using bing lexicon", 
        subtitle = " 90-100th best Billboard songs in 2015") + 
   theme_minimal()
+ggsave_proj_3
 ```
 ```{r}
 ggsave(ggsave_proj_3, file="bb_bottom_90_100png.png", scale=2)

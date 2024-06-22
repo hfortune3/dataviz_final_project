@@ -8,7 +8,6 @@ output:
 ---
 
 # Data Visualization Project 03
-## Does this work
 
 
 In this exercise you will explore methods to create different types of data visualizations (such as plotting text data, or exploring the distributions of continuous variables).
@@ -19,7 +18,7 @@ In this exercise you will explore methods to create different types of data visu
 Using the dataset obtained from FSU's [Florida Climate Center](https://climatecenter.fsu.edu/climate-data-access-tools/downloadable-data), for a station at Tampa International Airport (TPA) for 2022, attempt to recreate the charts shown below which were generated using data from 2016. You can read the 2022 dataset using the code below: 
 
 
-```r
+``` r
 library(tidyverse)
 weather_tpa <- read_csv("https://raw.githubusercontent.com/reisanar/datasets/master/tpa_weather_2022.csv")
 # random sample 
@@ -30,10 +29,10 @@ sample_n(weather_tpa, 4)
 ## # A tibble: 4 × 7
 ##    year month   day precipitation max_temp min_temp ave_temp
 ##   <dbl> <dbl> <dbl>         <dbl>    <dbl>    <dbl>    <dbl>
-## 1  2022    11    29          0          83       61       72
-## 2  2022     4    30          1.56       87       67       77
-## 3  2022     6    29          0.04       94       78       86
-## 4  2022     5    22          0          96       74       85
+## 1  2022     9    19          0.02       90       77     83.5
+## 2  2022     3     2          0          78       58     68  
+## 3  2022     1     3          0.02       75       55     65  
+## 4  2022    12     3          0          82       63     72.5
 ```
 
 See https://www.reisanar.com/slides/relationships-models#10 for a reminder on how to use this type of dataset with the `lubridate` package for dates and times (example included in the slides uses data from 2016).
@@ -55,7 +54,7 @@ Hint: the option `binwidth = 3` was used with the `geom_histogram()` function.
 
 
 
-```r
+``` r
 library(lubridate)
 library(dplyr)
 library(ggplot2)
@@ -92,14 +91,10 @@ ggplot(tpa_clean, aes(x = max_temp, fill = month)) +
 Hint: check the `kernel` parameter of the `geom_density()` function, and use `bw = 0.5`.
 
 
-```r
-ggplot(data = weather_tpa) +
- geom_density(data = weather_tpa, aes(x = max_temp, bw = .5))
-```
-
-```
-## Warning in geom_density(data = weather_tpa, aes(x = max_temp, bw = 0.5)):
-## Ignoring unknown aesthetics: bw
+``` r
+ggplot(data = weather_tpa,aes(x = max_temp,)) +
+ geom_density(bw = .5, kernel = "epanechnikov", fill = "dark gray")+
+  labs(x = "Maximum temperature")
 ```
 
 ![](lastname_project_03_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
@@ -109,7 +104,23 @@ ggplot(data = weather_tpa) +
 
 <img src="https://github.com/reisanar/figs/raw/master/tpa_max_temps_density_facet.png" width="80%" style="display: block; margin: auto;" />
 
-Hint: default options for `geom_density()` were used. 
+Hint: default options for `geom_density()` were used.
+
+
+``` r
+ggplot(tpa_clean, aes(x = max_temp, fill = month)) +
+  geom_density() +
+  labs(
+    Title = "Density plots for each month in 2016",
+    x = "Maximum temperatures"
+  ) +
+  facet_wrap(~ month)+ 
+  scale_y_continuous()+
+  scale_x_continuous()
+```
+
+![](lastname_project_03_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
 
 (d) Generate a plot like the chart below:
 
@@ -119,7 +130,64 @@ Hint: default options for `geom_density()` were used.
 Hint: use the`{ggridges}` package, and the `geom_density_ridges()` function paying close attention to the `quantile_lines` and `quantiles` parameters. The plot above uses the `plasma` option (color scale) for the _viridis_ palette.
 
 
+
+``` r
+#install.packages("viridis")
+library(viridis)
+```
+
+```
+## Loading required package: viridisLite
+```
+
+``` r
+library(ggridges)
+tpa_month<- tpa_clean %>%
+  mutate(month = month(doy))
+
+ggplot(data = tpa_clean, aes(x = max_temp, y = factor(month), fill = max_temp)) +
+  geom_density_ridges()+
+   scale_fill_viridis_c(option = "C")
+```
+
+```
+## Picking joint bandwidth of 1.93
+```
+
+```
+## Warning: The following aesthetics were dropped during statistical transformation: fill.
+## ℹ This can happen when ggplot fails to infer the correct grouping structure in
+##   the data.
+## ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+##   variable into a factor?
+```
+
+![](lastname_project_03_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
 (e) Create a plot of your choice that uses the attribute for precipitation _(values of -99.9 for temperature or -99.99 for precipitation represent missing data)_.
+
+
+``` r
+tpa_clean_no_na <- tpa_clean %>%
+  filter(max_temp != -99.9 & precipitation != -99.99)
+
+ggplot(data = tpa_clean_no_na, aes(x = max_temp, y = precipitation)) +
+  geom_point(alpha = 0.5, color = "blue") + 
+  geom_smooth(method = "lm", color = "red") +  
+ 
+  labs(
+    x = "Max Temp",
+    y = "Precipitation"
+  ) +
+  theme_minimal()
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](lastname_project_03_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
 
 
 
@@ -145,56 +213,54 @@ Make sure to include a copy of the dataset in the `data/` folder, and reference 
 
 (to get the "raw" data from any of the links listed above, simply click on the `raw` button of the GitHub page and copy the URL to be able to read it in your computer using the `read_csv()` function)
 
+``` r
+#setwd("C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dataviz_final_project/data")
+BB_top100_2015 = read.csv("C:/Users/hfort/OneDrive/Desktop/HF_dataviz_finproj/dataviz_final_project/data/BB_top100_2015.csv")
+```
 
-### Option (B): Data on Concrete Strength 
-
-Concrete is the most important material in **civil engineering**. The concrete compressive strength is a highly nonlinear function of _age_ and _ingredients_. The dataset used here is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php), and it contains 1030 observations with 9 different attributes 9 (8 quantitative input variables, and 1 quantitative output variable). A data dictionary is included below: 
-
-
-Variable                      |    Notes                
-------------------------------|-------------------------------------------
-Cement                        | kg in a $m^3$ mixture             
-Blast Furnace Slag            | kg in a $m^3$ mixture  
-Fly Ash                       | kg in a $m^3$ mixture             
-Water                         | kg in a $m^3$ mixture              
-Superplasticizer              | kg in a $m^3$ mixture
-Coarse Aggregate              | kg in a $m^3$ mixture
-Fine Aggregate                | kg in a $m^3$ mixture      
-Age                           | in days                                             
-Concrete compressive strength | MPa, megapascals
-
-
-Below we read the `.csv` file using `readr::read_csv()` (the `readr` package is part of the `tidyverse`)
-
-
-```r
-concrete <- read_csv("../data/concrete.csv", col_types = cols())
+``` r
+library(tidytext)
+bb_bottom_10<-BB_top100_2015 %>% 
+  filter(Rank %in% 91:100)%>%
+    unnest_tokens(word, Lyrics)%>%
+    filter(!word %in% stop_words$word, str_detect(word, "[a-z]"))
 ```
 
 
-Let us create a new attribute for visualization purposes, `strength_range`: 
-
-
-```r
-new_concrete <- concrete %>%
-  mutate(strength_range = cut(Concrete_compressive_strength, 
-                              breaks = quantile(Concrete_compressive_strength, 
-                                                probs = seq(0, 1, 0.2))) )
+``` r
+ggsave_proj_3<-bb_bottom_10 %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(Song, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive - negative) %>% 
+  ggplot() + 
+  geom_bar(aes(x = reorder(Song, sentiment), 
+               y = sentiment), 
+           stat = "identity") + 
+  coord_flip() + 
+  labs(x = "", 
+       title = "Sentiment Analysis of Songs using bing lexicon", 
+       subtitle = " 90-100th best Billboard songs in 2015") + 
+  theme_minimal()
 ```
 
+```
+## Joining with `by = join_by(word)`
+```
 
+``` r
+ggsave_proj_3
+```
 
-1. Explore the distribution of 2 of the continuous variables available in the dataset. Do ranges make sense? Comment on your findings.
+![](lastname_project_03_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
-2. Use a _temporal_ indicator such as the one available in the variable `Age` (measured in days). Generate a plot similar to the one shown below. Comment on your results.
+``` r
+ggsave(ggsave_proj_3, file="bb_bottom_90_100png.png", scale=2)
+```
 
-<img src="https://github.com/reisanar/figs/raw/master/concrete_strength.png" width="80%" style="display: block; margin: auto;" />
-
-
-3. Create a scatterplot similar to the one shown below. Pay special attention to which variables are being mapped to specific aesthetics of the plot. Comment on your results. 
-
-<img src="https://github.com/reisanar/figs/raw/master/cement_plot.png" width="80%" style="display: block; margin: auto;" />
-
+```
+## Saving 14 x 10 in image
+```
 
 
 
