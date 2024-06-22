@@ -42,8 +42,5 @@ In this project, I explored a dataset that contained weather conditions of the T
 
 ### Moving Forward
 
-<<<<<<< HEAD
 I throughly enjoyed how to make appropriate and accurate data visualizations. Was especially interesting to learn all of the different ways the data can be visualized as each way can lead the end result to produce much different results. In the future, I hope to learn how to use spatial data and interactivity in plots in tandem to be able to show how time alone can change a location over time. 
-=======
-I throughly enjoyed how to make appropriate and accurate data visualizations. Was especially interesting to learn all of the different ways the data can be visualized as each way can lead the end result to produce much different results. In the future, I hope to learn how to use spatial data and interactivity in plots in tandem to be able to show how time alone can change a location over time. 
->>>>>>> 027952cda0bbf422710851b4c8cbe644607e8e55
+
